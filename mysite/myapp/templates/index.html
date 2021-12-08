@@ -35,9 +35,12 @@
                                 </div>
                             </div>
                         </div>
-            
                     </div>
                   </div>
+                {% if prev >= 0 %}
+                <a href="/{{ prev }}/">prev</a>
+                {% endif %}
+                <a href="/{{ next }}/">next</a>
             </div>
         </div>
     </div>
