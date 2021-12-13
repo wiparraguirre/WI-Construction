@@ -3,7 +3,6 @@ from django.http import HttpResponse, JsonResponse
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 
-
 import random
 from datetime import datetime, timezone
 

@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html class="no-js" lang="en">
 
-<head style=color:#7b5836>
+<head>
     <meta charset="utf-8" />
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,22 +12,22 @@
 </head>
 
 <body style='background-color:#c19A6B'>
-    <div class="top-bar">
-        <div class="top-bar-left">
-          <ul class="menu">
-            <li class="menu-text">PAW PRINTS</li>
+    <div class="top-bar" style='background-color:#7b5836'>
+        <div class="top-bar-left" style='background-color:#7b5836'>
+          <ul class="menu" style='background-color:#7b5836'>
+            <li class="menu-text" >PAW PRINTS</li>
             {% if request.user.is_authenticated %}
-            <li><a href="/logout/">Logout</a></li>
-            <li><a href="/chat/">Chat Room</a></li>
+            <li><a href="/logout/" style='color:white'>Logout</a></li>
+            <li><a href="/chat/" style='color:white'>Chat Room</a></li>
             {% else %}
-            <li><a href="/login/">Login</a></li>
+            <li><a href="/login/" style='color:white'>Login</a></li>
             {% endif %}
           </ul>
         </div>
         <div class="top-bar-right">
-          <ul class="menu">
+          <ul class="menu" style='background-color:#7b5836'>
             {% if request.user.is_authenticated %}
-            <li><a href="/suggestion/">Add Picture</a></li>
+            <li><a href="/suggestion/" style='color:white'>Add Picture</a></li>
             <li>Hi {{ request.user.username }} </li>
             {% else %}
             <li>Welcome Guest</li>
@@ -39,8 +39,15 @@
     {% endblock %}
     <script src="{% static 'js/vendor.js' %}"></script>
     <script src="{% static 'js/app.min.js' %}"></script>
+    <div class="bottom-bar" style='background-color:#7b5836' >
+      <div class="top-bar-left" style='background-color:#7b5836'>
+        <ul class="menu" style='background-color:#7b5836'>
+        <li class="menu-text" >PAW PRINTS</li>
+      </div>
+  </div>
     {% block scripts %}
     {% endblock %}
+    
 </body>
 
 </html>
