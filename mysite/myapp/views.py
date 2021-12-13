@@ -11,8 +11,8 @@ from . import models
 from . import forms
 
 # Create your views here.
-def index(request, page=0):
-    list(range(page*10,page*10+10,1))
+def index(request):
+    #list(range(page*10,page*10+10,1))
     if request.method == "POST":
         form = forms.SuggestionForm(request.POST)
         if form.is_valid() and request.user.is_authenticated:
@@ -25,8 +25,8 @@ def index(request, page=0):
         "title": "Paw Prints",
         "body":"Hello World",
         "form": form,
-        "next": page+1,
-        "prev": page-1
+        #"next": page+1,
+        #"prev": page-1
     }
     return render(request,"index.html", context=context)
 
