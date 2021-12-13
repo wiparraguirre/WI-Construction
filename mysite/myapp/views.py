@@ -25,8 +25,6 @@ def index(request):
         "title": "Paw Prints",
         "body":"Hello World",
         "form": form,
-        #"next": page+1,
-        #"prev": page-1
     }
     return render(request,"index.html", context=context)
 
