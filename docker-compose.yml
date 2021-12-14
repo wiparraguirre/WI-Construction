@@ -7,11 +7,17 @@ services:
     build: .
     volumes:
        - .:/code
+    links:
+       - redis:redis
     expose:
        - 8000
     user: 1001:1002 #needed for linux
     command: python /code/mysite/manage.py runserver 0.0.0.0:8000
-
+   
+  redis:
+   image: redis:latest
+   expose:
+      - 6379
   nginx:
    restart: always
    build: ./nginx/
