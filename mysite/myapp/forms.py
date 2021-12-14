@@ -59,14 +59,14 @@ class CommentForm(forms.Form):
         # validators=[validate_unicode_slug, must_be_caps, must_be_bob]
         )
 
-    #def save(self, request, sugg_id):
-    #    suggestion_instance = models.SuggestionModel.objects.get(id=sugg_id)
-    #    comment_instance = models.CommentModel()
-    #    comment_instance.comment = self.cleaned_data["comment_field"]
-    #    comment_instance.author = request.user
-    #    comment_instance.suggestion = suggestion_instance
-    #    comment_instance.save()
-    #    return comment_instance
+    def save(self, request, sugg_id):
+        suggestion_instance = models.SuggestionModel.objects.get(id=sugg_id)
+        comment_instance = models.CommentModel()
+        comment_instance.comment = self.cleaned_data["comment_field"]
+        comment_instance.author = request.user
+        comment_instance.suggestion = suggestion_instance
+        comment_instance.save()
+        return comment_instance
 
 class RegistrationForm(UserCreationForm):
     email = forms.EmailField(
