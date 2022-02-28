@@ -6,15 +6,6 @@ class SuggestionModel(models.Model):
     suggestion = models.CharField(max_length=240)
     author = models.ForeignKey(auth_user, on_delete=models.CASCADE)
     published_on = models.DateTimeField(auto_now_add=True)
-    image = models.ImageField(
-        max_length = 144,
-        upload_to = 'uploads/%Y/%m/%d/',
-        null=True
-    )
-    image_description = models.CharField(
-        max_length=240,
-        null=True
-    )
 
     def __str__(self):
         return str(self.author.username) + " " + str(self.suggestion)

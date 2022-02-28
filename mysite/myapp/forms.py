@@ -7,18 +7,6 @@ from django.contrib.auth.models import User as auth_user
 
 from . import models
 
-def must_be_caps(value):
-    if not value.isupper():
-        raise forms.ValidationError("Not all upper case")
-    # Always return the cleaned data
-    return value
-
-def must_be_bob(value):
-    if not value.startswith("BOB"):
-        raise forms.ValidationError("Must start with BOB")
-    # Always return the cleaned data
-    return value
-
 def must_be_unique(value):
     user_objects = auth_user.objects.filter(email=value)
     if len(user_objects) > 0:
@@ -29,25 +17,14 @@ def must_be_unique(value):
 
 class SuggestionForm(forms.Form):
     suggestion_field = forms.CharField(
-        label='Post',
+        label='Suggestion',
         max_length=240,
         # validators=[validate_unicode_slug, must_be_caps, must_be_bob]
         )
-    image = forms.ImageField(
-        label="Image File",
-        required=False
-    )
-    image_description = forms.CharField(
-        label="Image Description",
-        max_length=240,
-        required=False
-    )
 
     def save(self, request):
         suggestion_instance = models.SuggestionModel()
         suggestion_instance.suggestion = self.cleaned_data["suggestion_field"]
-        suggestion_instance.image = self.cleaned_data["image"]
-        suggestion_instance.image_description = self.cleaned_data["image_description"]
         suggestion_instance.author = request.user
         suggestion_instance.save()
         return suggestion_instance

@@ -3,6 +3,7 @@ from django.http import HttpResponse, JsonResponse
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 
+
 import random
 from datetime import datetime, timezone
 
@@ -11,7 +12,6 @@ from . import forms
 
 # Create your views here.
 def index(request):
-    #list(range(page*10,page*10+10,1))
     if request.method == "POST":
         form = forms.SuggestionForm(request.POST)
         if form.is_valid() and request.user.is_authenticated:
@@ -21,9 +21,8 @@ def index(request):
         form = forms.SuggestionForm()
 
     context = {
-        "title": "Paw Prints",
-        "body":"Hello World",
-        "form": form,
+        "title": "WI Constrcution",
+       "form": form
     }
     return render(request,"index.html", context=context)
 
@@ -48,7 +47,7 @@ def suggestion_view(request):
     if not request.user.is_authenticated:
         return redirect("/login/")
     if request.method == "POST":
-        form = forms.SuggestionForm(request.POST, request.FILES)
+        form = forms.SuggestionForm(request.POST)
         if form.is_valid() and request.user.is_authenticated:
             form.save(request)
             return redirect("/")
@@ -56,7 +55,7 @@ def suggestion_view(request):
         form = forms.SuggestionForm()
 
     context = {
-        "title": "Add Post",
+        "title": "Add Image",
        "form": form
     }
     return render(request,"suggestion.html", context=context)
@@ -89,7 +88,7 @@ def register_view(request):
     return render(request,"registration/register.html", context=context)
 
 def suggestions_view(request):
-    suggestion_objects = models.SuggestionModel.objects.all().order_by("-published_on")
+    suggestion_objects = models.SuggestionModel.objects.all()
     suggestion_list = {}
     suggestion_list["suggestions"] = []
     for sugg in suggestion_objects:
@@ -101,12 +100,6 @@ def suggestions_view(request):
         temp_sugg["id"] = sugg.id
         temp_sugg["author"] = sugg.author.username
         temp_sugg["date"] = sugg.published_on.strftime("%Y-%m-%d")
-        if sugg.image:
-            temp_sugg["image"] = sugg.image.url
-            temp_sugg["image_desc"] = sugg.image_description
-        else:
-            temp_sugg["image"] = ""
-            temp_sugg["image_desc"] = ""
         temp_sugg["comments"] = []
         for comm in comment_objects:
             temp_comm = {}
