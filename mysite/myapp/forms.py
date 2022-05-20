@@ -15,35 +15,29 @@ def must_be_unique(value):
     return value
 
 
-class SuggestionForm(forms.Form):
-    suggestion_field = forms.CharField(
-        label='Suggestion',
+class GalleryForm(forms.Form):
+    gallery_field = forms.CharField(
+        label='Post',
         max_length=240,
-        # validators=[validate_unicode_slug, must_be_caps, must_be_bob]
         )
+    image = forms.ImageField(
+        label="Image File",
+        required=False,
+    )
+    image_description = forms.CharField(
+        label="Image Description",
+        max_length=240,
+        required=False
+    )
 
     def save(self, request):
-        suggestion_instance = models.SuggestionModel()
-        suggestion_instance.suggestion = self.cleaned_data["suggestion_field"]
-        suggestion_instance.author = request.user
-        suggestion_instance.save()
-        return suggestion_instance
-
-class CommentForm(forms.Form):
-    comment_field = forms.CharField(
-        label='Comment',
-        max_length=240,
-        # validators=[validate_unicode_slug, must_be_caps, must_be_bob]
-        )
-
-    def save(self, request, sugg_id):
-        suggestion_instance = models.SuggestionModel.objects.get(id=sugg_id)
-        comment_instance = models.CommentModel()
-        comment_instance.comment = self.cleaned_data["comment_field"]
-        comment_instance.author = request.user
-        comment_instance.suggestion = suggestion_instance
-        comment_instance.save()
-        return comment_instance
+        gallery_instance = models.GalleryModel()
+        gallery_instance.gallery = self.cleaned_data["gallery_field"]
+        #gallery_instance.image = self.cleaned_data["image"]
+        gallery_instance.image_description = self.cleaned_data["image_description"]
+        gallery_instance.author = request.user
+        gallery_instance.save()
+        return gallery_instance
 
 class RegistrationForm(UserCreationForm):
     email = forms.EmailField(
@@ -67,3 +61,10 @@ class RegistrationForm(UserCreationForm):
         if commit:
             user.save()
         return user
+
+class ContactForm(forms.Form):
+    firstname = forms.CharField(max_length = 100, required = True, label="Your first name")
+    lastname = forms.CharField(max_length = 100, required = True, label="Your last name")
+    email = forms.CharField(max_length = 150, required = True, label="Email Address")
+    message = forms.CharField(widget = forms.Textarea, max_length = 2000, required = True)
+

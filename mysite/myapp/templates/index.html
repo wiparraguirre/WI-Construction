@@ -2,29 +2,48 @@
 {% load static %}
 
 {% block title %}{{ title }}{% endblock %}
+{% block css %}
+{% csrf_token %}
+<link rel="stylesheet" href="{% static 'css/app2.css' %}">
+{% endblock %}
 {% block content %}
-<div id="list-rendering">
-    <div class="grid-container">
-        <div class="grid-x grid-padding-x">
-            <div class="large-12 medium-12 small-12 cell" v-for="sugg in suggestions">
-                {% verbatim %}
-                {{ sugg.suggestion }} - {{ sugg.author }} - {{ sugg.date }}
-                <ul>
-                    <li v-for="comm in sugg.comments"> {{ comm.comment }} - {{ comm.author }} - {{ comm.date }}</li>
-                    {% endverbatim %}
-                    {% if reqest.user.is_authenticated %}
-                    <li><a v-bind:href="'comment/'+sugg.id+'/'">comment</a></li>
-                    {% endif %}
-                </ul>
-
-            </div>
-
-        </div>
+<div class="row">
+    <div class="col-lg-4 mb-4 mb-lg-0">
+        New framing
+        <img src="{% static 'pic13.jpg' %}" alt="" class="w-100 shadow-1-strong rounded mb-4" width="600px" >
+    </div>        
+    <div class="col-lg-4 mb-4 mb-lg-0">
+        Removal of old concrete
+        <img src="{% static 'pic9.jpg' %}" alt="" class="w-100 shadow-1-strong rounded mb-4" width="600px" >
     </div>
-</div>
+    <div class="col-lg-4 mb-4 mb-lg-0">
+        Extension of kitchen, bedroom, and bathroom
+        <img src="{% static 'pic12.jpg' %}" alt="" class="w-100 shadow-1-strong rounded mb-4" width="600px" >
+    </div>
+    <div class="col-lg-4 mb-4 mb-lg-0">
+        Installation of bathroom
+        <img src="{% static 'pic18.jpg' %}" alt="" class="w-100 shadow-1-strong rounded mb-4" width="600px" >
+    </div>  
+    <div class="col-lg-4 mb-4 mb-lg-0">
+        Tile installation and kitchen island
+        <img src="{% static 'pic15.jpeg' %}" alt="" class="w-100 shadow-1-strong rounded mb-4" width="600px" >
+    </div>
+    <div class="col-lg-4 mb-4 mb-lg-0">
+        Extension of kitchen wall
+        <img src="{% static 'pic14.jpg' %}" alt="" class="w-100 shadow-1-strong rounded mb-4" width="600px" >
+    </div>
+    <div class="col-lg-4 mb-4 mb-lg-0">
+        Crown molding
+        <img src="{% static 'crown.jpg' %}" alt="" class="w-100 shadow-1-strong rounded mb-4" width="600px" >
+    </div>
+    <div class="col-lg-4 mb-4 mb-lg-0">
+        Exterior painting and roofing
+        <img src="{% static 'roofing.jpg' %}" alt="" class="w-100 shadow-1-strong rounded mb-4" width="600px" >
+    </div>
+</div> 
+    
 {% endblock %}
 {% block scripts %}
 <script src="https://unpkg.com/vue@next"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script src="{% static 'js/myvue.js' %}"></script>
 {% endblock %}

@@ -1,7 +1,10 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
+from .forms import ContactForm
+from django.core.mail import send_mail, BadHeaderError
+
 
 
 import random
@@ -13,55 +16,57 @@ from . import forms
 # Create your views here.
 def index(request):
     if request.method == "POST":
-        form = forms.SuggestionForm(request.POST)
+        form = forms.GalleryForm(request.POST, request.FILES)
         if form.is_valid() and request.user.is_authenticated:
             form.save(request)
-            form = forms.SuggestionForm()
+            form = forms.GalleryForm()
     else:
-        form = forms.SuggestionForm()
+        form = forms.GalleryForm()
+
+    gallery_objects = models.GalleryModel.objects.all().order_by("-published_on")
+    gallery_list = []
+    for gall in gallery_objects:
+        temp_gall = {}
+        temp_gall["gallery"] = gall.gallery
+        temp_gall["id"] = gall.id
+        temp_gall["author"] = gall.author.username
+        temp_gall["date"] = gall.published_on.strftime("%Y-%m-%d")
+        if gall.image:
+             temp_gall["image"] = gall.image.url
+             temp_gall["image_desc"] = gall.image_description
+        else:
+             temp_gall["image"] = ""
+             temp_gall["image_desc"] = ""
+        gallery_list += [temp_gall]
 
     context = {
-        "title": "WI Constrcution",
-       "form": form
+        "title": "W.I. Construction",
+        "body":"Hello World",
+        "form": form,
+        "gallery_list":gallery_list,
     }
     return render(request,"index.html", context=context)
 
-@login_required
-def comment_view(request, sugg_id):
-    if request.method == "POST":
-        form = forms.CommentForm(request.POST)
-        if form.is_valid() and request.user.is_authenticated:
-            form.save(request, sugg_id)
-            return redirect("/")
-    else:
-        form = forms.CommentForm()
 
-    context = {
-        "title": "Comment",
-        "sugg_id": sugg_id,
-       "form": form
-    }
-    return render(request,"comment.html", context=context)
-
-def suggestion_view(request):
+def gallery_view(request):
     if not request.user.is_authenticated:
         return redirect("/login/")
     if request.method == "POST":
-        form = forms.SuggestionForm(request.POST)
+        form = forms.GalleryForm(request.POST, request.FILES)
         if form.is_valid() and request.user.is_authenticated:
             form.save(request)
             return redirect("/")
     else:
-        form = forms.SuggestionForm()
+        form = forms.GalleryForm()
 
     context = {
-        "title": "Add Image",
-       "form": form
+        "title": "Add Post",
+       "form": form,
     }
-    return render(request,"suggestion.html", context=context)
+    return render(request,"gallery2.html", context=context)
 
 def delete_random(request):
-    some_list = models.SuggestionModel.objects.all()
+    some_list = models.GalleryModel.objects.all()
     some_int = random.randrange(len(some_list))
     some_instance = some_list[some_int]
     some_instance.delete()
@@ -87,40 +92,53 @@ def register_view(request):
     }
     return render(request,"registration/register.html", context=context)
 
-def suggestions_view(request):
-    suggestion_objects = models.SuggestionModel.objects.all()
-    suggestion_list = {}
-    suggestion_list["suggestions"] = []
-    for sugg in suggestion_objects:
+def galls_view(request):
+    gallery_objects = models.GalleryModel.objects.all().order_by("-published_on")
+    gallery_list = {}
+    gallery_list["galls"] = []
+    for gall in gallery_objects:
         comment_objects = models.CommentModel.objects.filter(
-            suggestion=sugg
+            gallery=gall
             )
-        temp_sugg = {}
-        temp_sugg["suggestion"] = sugg.suggestion
-        temp_sugg["id"] = sugg.id
-        temp_sugg["author"] = sugg.author.username
-        temp_sugg["date"] = sugg.published_on.strftime("%Y-%m-%d")
-        temp_sugg["comments"] = []
-        for comm in comment_objects:
-            temp_comm = {}
-            temp_comm["comment"] = comm.comment
-            temp_comm["id"] = comm.id
-            temp_comm["author"] = comm.author.username
-            time_diff = datetime.now(timezone.utc) - comm.published_on
-            time_diff_s = time_diff.total_seconds()
-            if time_diff_s < 60:
-                temp_comm["date"] = "published " + str(int(time_diff_s)) + " seconds ago"
-            else:
-                time_diff_m = divmod(time_diff_s,60)[0]
-                if time_diff_m < 60:
-                    temp_comm["date"] = "published " + str(int(time_diff_m)) + " minutes ago"
-                else:
-                    time_diff_h = divmod(time_diff_m,60)[0]
-                    if time_diff_h < 24:
-                        temp_comm["date"] = "published " + str(int(time_diff_h)) + " hours ago"
-                    else:
-                        temp_comm["date"] = comm.published_on.strftime("%Y-%m-%d %H:%M:%S")
-            temp_sugg["comments"] += [temp_comm]
-        suggestion_list["suggestions"] += [temp_sugg]
+        temp_gall = {}
+        temp_gall["gallery"] = gall.gallery
+        temp_gall["id"] = gall.id
+        temp_gall["author"] = gall.author.username
+        temp_gall["date"] = gall.published_on.strftime("%Y-%m-%d")
+        if gall.image:
+            temp_gall["image"] = gall.image.url
+            temp_gall["image_desc"] = gall.image_description
+        else:
+            temp_gall["image"] = ""
+            temp_gall["image_desc"] = ""        
+        gallery_list["galls"] += [temp_gall]
 
-    return JsonResponse(suggestion_list)
+    return JsonResponse(gallery_list)
+
+def about_view(request):
+    context = {
+        "title": "About Page",
+    }
+    return render(request, "about.html", context=context)
+
+def service_view(request):
+    context = {
+        "title": "Service Page",
+    }
+    return render(request, "service.html", context=context)
+
+
+def contact_view(request):
+    submitted = False
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            #assert False
+            return HttpResponseRedirect('/contact?submitted=True')
+    else:
+        form = ContactForm()
+        if 'submitted' in request.GET:
+            submitted = True
+
+    return render(request, 'contact.html', {'form': form, 'submitted': submitted})

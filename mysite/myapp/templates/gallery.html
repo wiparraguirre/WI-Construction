@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+{% if request.user.is_staff %} 
+<div class="grid-x grid-padding-x">
+  <!-- <div class="large-4 medium-4 small-12 cell"></div> -->
+  <div class="large-4 medium-4 small-12 large-offset-4 medium-offset-4 cell">
+    <h3 class="text-center">Add Picture</h3>
+    <form action="/gallery/" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        {{ form }}
+        <input type="submit" class="button expanded" value="Add Picture" style='color:black;'/>
+    </form>
+  </div>
+</div>
+{% end if %}
+{% endblock %}
